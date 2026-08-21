@@ -705,7 +705,7 @@ fn whitney_basis_support_is_exactly_its_dof_cells() {
       cochain,
       baked.fill_triangles().iter().copied(),
     );
-    for (cc, corners) in baked.cell_corners.iter().zip(colors.chunks_exact(3)) {
+    for (cc, corners) in baked.cell_corners.iter().zip(colors.as_chunks::<3>().0) {
       let cell = SimplexIdx::new(n, cc.cell).handle(&scene.topology);
       let supported = dof_vertices
         .iter()
