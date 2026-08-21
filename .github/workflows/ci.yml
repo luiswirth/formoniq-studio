@@ -1,0 +1,92 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# Least privilege: CI only reads the repository.
+permissions:
+  contents: read
+
+# A new push to a branch supersedes the run already in flight for it.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  # Fail the build on any warning, in CI only -- local builds stay warning-tolerant.
+  RUSTFLAGS: -D warnings
+
+# Every job takes its toolchain from rust-toolchain.toml, the file the devShell
+# reads as well, so a check here runs against what a local build runs against.
+# The action caches the build as Swatinem/rust-cache does, being a wrapper of it.
+#
+# The built-in meshes are embedded at compile time and tracked in git LFS, so
+# every job that compiles needs the real bytes checked out, not the pointers.
+jobs:
+  fmt:
+    name: rustfmt
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          components: rustfmt
+          # Nothing is compiled here, so there is nothing worth caching.
+          cache: false
+      - run: cargo fmt --all --check
+
+  clippy:
+    name: clippy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          lfs: true
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          components: clippy
+      - run: cargo clippy --all-targets --all-features
+
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          lfs: true
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - run: cargo test --all-features
+
+  doc:
+    name: doc
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          lfs: true
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      # The doc comments carry the mathematics: broken intra-doc links are errors.
+      - run: cargo doc --no-deps
+        env:
+          RUSTDOCFLAGS: -D warnings
+
+  web:
+    name: web
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          lfs: true
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          components: clippy
+      # Guards against a wasm-only regression in the viewer's platform split.
+      # The workflow's `RUSTFLAGS: -D warnings` overrides `.cargo/config.toml`,
+      # so the `getrandom` web backend cfg is restated here alongside it.
+      - run: cargo clippy --lib --target wasm32-unknown-unknown
+        env:
+          RUSTFLAGS: -D warnings --cfg getrandom_backend="wasm_js"

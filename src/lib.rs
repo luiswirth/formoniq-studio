@@ -1,8 +1,7 @@
 //! `formoniq-studio`: the visual, interactive counterpart to `formoniq`, a
 //! viewer for inspecting PDE solutions, meshes and simplicial manifolds,
-//! cochains, and the differential geometry underneath them. See
-//! `crates/studio/CLAUDE.md` for the intrinsic/extrinsic seam this crate lives
-//! on either side of.
+//! cochains, and the differential geometry underneath them. See `CLAUDE.md`
+//! for the intrinsic/extrinsic seam this crate lives on either side of.
 
 extern crate nalgebra as na;
 
