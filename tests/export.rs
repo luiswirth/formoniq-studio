@@ -99,9 +99,10 @@ fn headless_render_draws_the_scene() {
   // mismatch here is a panic rather than a silent pass.
   let pixels = render_at(&ctx, &mut renderer, &target, &displayed, 0.0, 4);
   assert_eq!(pixels.len(), 64 * 64 * 4);
-  let first = &pixels[..4];
+  let (rgba, _) = pixels.as_chunks::<4>();
+  let first = rgba[0];
   assert!(
-    pixels.chunks_exact(4).any(|px| px != first),
+    rgba.iter().any(|&px| px != first),
     "every pixel is identical: the scene did not draw"
   );
 }
