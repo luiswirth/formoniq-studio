@@ -1,12 +1,4 @@
-# formoniq-realize and formoniq-studio
-
-One file for both crates on the extrinsic side of the engine,
-because they are one subject: the vantage point the parent's invariants are read from.
-`realize` is where intrinsic data becomes extrinsic
-(the two reductions, the bake, the exporters),
-`studio` is the renderer over it,
-and "The two seams" below is the boundary between them,
-so splitting the file would cut the argument in half at its own hinge.
+# formoniq-studio
 
 `formoniq-studio` is the visual, interactive counterpart to `formoniq`:
 a viewer for inspecting PDE solutions, meshes and simplicial manifolds, cochains,
@@ -14,204 +6,52 @@ and the differential geometry underneath them.
 It is meant to be both an instrument for a mathematician or engineer
 and a way to see the abstractions directly.
 
-This file carries what is particular to the viewer.
-The parent `CLAUDE.md` still governs:
-its invariants, conventions and house style bind here unchanged.
-What differs is the vantage point, and that is the whole subject below.
+## The engine is upstream, and it governs
 
-## The one inversion
+[`formoniq`](https://github.com/luiswirth/formoniq) is a separate repository,
+depended on as one git source pinned to one revision.
+Its `CLAUDE.md` still governs here:
+its invariants, conventions and house style bind unchanged,
+and a concept expressible without a renderer belongs there rather than here.
+The direction is strict, as it is inside the engine's own ladder:
+this repository depends on the engine and nothing there depends on it,
+which is what keeps the graphics stack out of the engine's build entirely.
 
-The parent engine is intrinsic-first, extrinsic-only-for-I/O.
-`studio` is the consumer of exactly the carve-out invariant 2 draws:
-the wrapper that "requires an embedding" for "I/O, visualization or convenience."
-Visualization cannot be done without an embedding
-(there is nothing to put on screen until a point has a position),
-so the polarity flips.
-**`studio` is extrinsic by necessity, intrinsic wherever it still can be.**
+The engine's `crates/realize` is the crate directly below this one,
+and its `CLAUDE.md` carries the extrinsic side's design:
+the one inversion of the parent's intrinsic-first discipline,
+the bake (the seam out) and the two reductions, of grade to a mark and of dimension to a primitive.
+Read it before changing anything about what a field looks like.
+This file carries what is particular to the *viewer*.
 
-This is not a relaxation of the parent's discipline.
-It is the honest statement of the one place that discipline does not reach,
-and it inverts the parent's motto rather than weakening it.
-The corollary bites the same way the parent's does:
-the moment a concept can be expressed without an embedding,
-it does not belong in `studio`'s baking layer.
-It belongs downstack, in the engine.
-
-## The two seams
+## The seam in
 
 The embedding is not assumed diffusely throughout the viewer.
-It lives between two named boundaries,
-and intrinsic structure is carried as far toward the screen as it can go before either one commits.
+It enters at the bake, which is `realize`'s,
+and intrinsic structure is carried as far toward the screen as it can go before that commits.
 
-**Both seams live in `realize`, and the renderer is above them.**
-That is the crate split, and it follows from what the seams already are:
-everything between them is a pure data transformation
-and nothing in it needs a GPU or a window.
-So an exporter and the viewer are *peers* consuming the same reduction,
-rather than the exporter living inside the viewer,
-which is what makes an external tool and the viewer agree about what a field looks like.
-A reduction that only one consumer can reach has been put in the wrong crate.
+**`Scene` is the seam in:**
+it carries the engine's own types (`Complex`, `MeshCoords`, `Cochain`)
+rather than a lossy export format,
+so the coloring, the displacement and the choice of render mark
+stay decisions of the viewer, made on the real object.
 
-- **`Scene` is the seam in:**
-  It carries the engine's own types (`Complex`, `MeshCoords`, `Cochain`)
-  rather than a lossy export format,
-  so the coloring, the displacement and the choice of render mark
-  stay decisions of the viewer, made on the real object.
-- **The bake is the seam out:**
-  It reduces a complex to what a rasterizer draws:
-  simplices of dimension $<= 2$ embedded in $RR^3$, with winding and embedding made explicit,
-  the two things the core keeps out,
-  because a graphics API and an interchange file both need them.
-  Downstream of the bake there are no FEEC types, only ambient geometry.
-  The interchange file is the reason to say "both" rather than "the renderer":
-  `.vtu` for ParaView, `.obj`/`.mdd` for a mesh,
-  each a leaf that consumes the bake and commits further
-  (VTU's points are 3-tuples and its cells stop at the tetrahedron,
-  so a mesh above three dimensions is *its* refusal, not the bake's).
-
-  The bake's vertex table splits by what a datum depends on:
-  the static half is a function of the mesh and its embedding alone
-  (position, normal, curvature cap, winding), the other is the field on it.
-  Switching fields, or scrubbing a trajectory, therefore rewrites only the field stream.
-  A datum that would have to be recomputed to change fields is in the wrong half.
-
-  The field half is itself split,
-  because a reduced-grade Whitney form is **discontinuous across cells**:
-  only the tangential part of a section is chart-independent,
-  so incident cells disagree at a shared vertex
-  and a basis function's support ends on cell edges.
-  Its **colormap** value is therefore read once *per rendered corner in the corner's own cell*
-  (the fill's corners are unshared already, for the deposit atlas),
-  so a cell the form vanishes on stays exactly black
-  instead of inheriting a neighbor's value through a shared vertex.
-  A per-vertex tint cannot state this and silently bleeds a DOF's magnitude into every incident cell.
-
-  The **displacement height** follows the field's own continuity,
-  by the same reduction that picks the mark rather than by a second rule.
-  $cal(W) Lambda^0$ is $P_1$:
-  a vertex has one value, the nodal recovery *is* the field,
-  and the surface displaces as one connected sheet.
-  $cal(W) Lambda^n$ is $P_0$:
-  the reduced density is constant per cell and discontinuous across it,
-  so there is no continuous height to ride
-  and each cell displaces **rigidly**, by its own constant.
-  That tears the surface, and the tear is the mark:
-  cells separate by exactly the jump across their shared face,
-  so the discontinuity becomes visible space and the surface re-closes under refinement.
-  Smoothing it instead would show one field flat-shaded in color and smooth in shape,
-  two contradictory claims in one frame.
-  A nodal average where the field is genuinely discontinuous is a recovery,
-  and presenting a recovery as the field is the thing to avoid.
-  The shared 1-skeleton cannot tear without being duplicated,
-  so the segment marks keep the continuous recovery at every grade.
-
-  **A mark is sized by the length its own question is about.**
-  Two scales are available and they are not interchangeable:
-  the object's *extent* and the mesh's *mean edge length*.
-  A quantity that should read the same however finely the object is triangulated
-  (how far a standing wave swells, how fast a tracer crosses, how dense the glyph lattice is)
-  is a fraction of the extent.
-  A mark that draws the mesh's own features
-  (the stroke of an edge, the size of a per-cell mark)
-  is a fraction of the edge length, or of a length already derived from it.
-  Getting this backwards reads correctly at exactly one refinement:
-  tie a stroke to the extent and refining the mesh shrinks the cells while the strokes stay put,
-  until the wireframe is a solid mass and the arrows are stubs.
-  A mark whose every dimension is a proportion of one cell-derived length is self-similar,
-  and then there is no resolution at which it can be wrong.
-
-  **A displacement is bounded by scaling it, never by clamping it.**
-  The bound is the mesh's *reach*,
-  the distance to its own medial axis, below which the normal offset is still an embedding.
-  Curvature radius is only half of that bound, the local half.
-  The other half is the bottleneck, how far the surface is from a different sheet of itself,
-  and it is the half that thin features live in.
-  A flat plate has infinite curvature radius and reach $t \/ 2$,
-  so a curvature-only ceiling lets its two faces pass through each other.
-  Given the bound, the amplitude is one global scalar chosen so no vertex exceeds it.
-  A per-vertex clamp is the wrong instrument:
-  it binds at a different value at every vertex,
-  so it flattens the field in patches
-  and seams the surface between clamped and unclamped neighbors,
-  that is not a bounded deformation but a different one.
-  Scaling is the operation an eigenmode is indifferent to, being defined up to a scalar,
-  so it bounds the picture without changing which mode the picture is of.
-
-Between the two the discipline is lived, not hoped for:
-a curve integrator works in the barycentric charts of the atlas
-and crosses cells through the `Transition`,
-committing to an ambient position only where it must.
-Anything new belongs on that same spine:
+Between it and the bake the discipline is lived, not hoped for:
+anything new belongs on that same spine,
 intrinsic until the bake, extrinsic only after it.
+An exporter and this viewer are peers over the same reduction,
+which is what makes an external tool and the viewer agree about what a field looks like;
+a reduction that only the viewer can reach has been put in the wrong repository.
 
-## Fixed ambient, general intrinsic
+## One renderer across dimension and grade
 
-**Ambient dimension is $3$, by deliberate constant,** not a limit to apologize for.
-It is the native space of the GPU,
-so $RR^2$ is the codimension case, embedded in the $z = 0$ plane, and $RR^1$ a further one.
-A lower-dimensional cell embeds as itself there, exactly as a flat surface does.
-One ambient space, always $3$, is a unification, not a special case.
-
-**Intrinsic dimension and form grade stay agnostic**, on the range the ambient allows.
-A point set, a curve and a surface are one `MeshCoords`-in-$RR^3$ pipeline across grades,
-not three renderers:
+Ambient dimension is $3$, `realize`'s deliberate constant and the native space of the GPU.
+Intrinsic dimension and form grade stay agnostic on the range it allows.
+A point set, a curve and a surface are one pipeline across grades, not three renderers:
 a curve renderer split off from a surface renderer
-would be the `if dim == 3` of the parent, reappearing here.
+would be the `if dim == 3` of the engine, reappearing here.
 
-Two reductions carry that, and they are the same move made on the two axes:
-
-- **Grade reduces to a mark:**
-  A $k$-form reduces to its *reduced grade* $min(k, n-k)$ through the Hodge star,
-  and the render mark is chosen on that.
-  Where that star actually fires ($k > n-k$) it needs a *global* volume form,
-  so the reduction takes the cell's coherent orientation alongside the metric,
-  the parent's invariant 6,
-  and the one place the viewer needs a topological datum the solver never asks for.
-  A mesh with no coherent orientation has no such reduction to show,
-  so those fields are refused at `Scene::field` rather than drawn with a per-cell sign.
-  A field that reaches a mark is already the proof that its orientation exists.
-
-  Where a gauge is genuinely free,
-  prefer making the mark independent of it over picking a value for it.
-  The rigid cell displacement $d_K n_K$ is the model:
-  the density and the cell normal flip together, so the motion is invariant.
-  The gauges that remain are pinned only as far as reproducibility needs:
-  a mode's sign is arbitrary, so it is fixed canonically.
-  A solve's is physical and is left alone.
-- **Intrinsic dimension reduces to a render primitive:**
-  An $n$-manifold reduces to the primitive $min(n, 2)$ in the bake:
-  a surface to wound triangles, a curve to segments, a point cloud to points,
-  and a solid to the 2-simplices of its boundary,
-  all of it an observer in $RR^3$ can see.
-
-**The two reductions compose, and the order is fixed: dimension first, grade second.**
-The object a mark is a mark *of* is the render surface
-(the mesh itself below $n = 3$, the boundary $diff M$ for a solid),
-so the $n$ in $min(k, n-k)$ is the *surface's*, never the mesh's.
-`Surface` is that reduction named once,
-and it is a genuine manifold one dimension down,
-with its own complex, orientation and metric.
-A field reaches it by its **trace** $i^*: C^k (M) -> C^k (diff M)$, a cochain map,
-hence a real Whitney form on $diff M$ rather than a resampling or a nodal recovery.
-
-Getting the order backwards is what a dimension-blind mark looks like:
-a $2$-form on a solid reduces to grade 1 against the volume (arrows)
-but to grade 0 against the boundary (a density),
-and only the latter is a claim about anything on screen:
-a flux has no direction in the surface carrying it.
-An arrow glyph is the sharp case,
-because a flat mark needs a plane to lie in and a determined perpendicular,
-and a tetrahedron supplies neither.
-
-**The trace is total in grade but vanishes at the top**, since $C^n (diff M) = 0$.
-A top-grade density is a *volume* quantity,
-and reading it on the boundary is a sampling of the cells behind it, never a trace:
-the two must not be conflated,
-and a mark that needs the volume says so rather than tracing to zero and drawing nothing.
-Volume marks (a camera-facing glyph, a slice) are where this extends.
-They are a different mark with a different frame, not this one run on cells.
-
-Each case distinction is confined to its own reduction (to the mark, and to the bake),
+Each case distinction is confined to its own reduction, both of which are `realize`'s,
 never smeared through the renderer,
 which sees only which *items* a frame has, never why.
 The consequence is that one segment pipeline serves the wireframe overlay,
@@ -221,23 +61,11 @@ and what differed between them (ink, width, taper, whether the mark rides the wa
 What the current ambient does not yet reach (a reduced grade $>= 2$, a point cloud's mark)
 is where these extend, not a branch to route around.
 
-## The extrinsic freedom is the embedding, not the metric
-
-Because an embedding is present,
-`studio` may use it and the ambient geometry it induces
-(normals, ambient distances, global position)
-wherever that is cleaner than an intrinsic construction.
-This is the genuine license the core denies itself.
-
-Name it precisely, because it is easy to overclaim:
-the freedom is *ambient* geometry, not *metric*.
-A `RiemannianMetric` is not an extrinsic object.
-The core uses it freely
-(invariant 5 forbids only letting it leak into a signature that does not mathematically need one),
+The freedom the viewer has over the engine is the *embedding* and the ambient geometry
+read off it (normals, ambient distances, global position), and nothing else.
+It is not a license about the metric:
+a metric is not an extrinsic object, the core uses it freely,
 and every metric here is the one the embedding already induces.
-What `studio` grants itself over the core
-is the embedding and the ambient space, and the global geometry read off them.
-Nothing about the metric changes.
 
 ## The layers of the viewer
 
@@ -491,12 +319,36 @@ The native build is untouched by any of this:
 the per-target dependency and feature splits
 (the `faer` thread pool, the clipboard backend, the `getrandom` web entropy source)
 restore the exact native set,
-so a native change never pays for the web target's existence,
-the same way `studio` itself stays off the core's critical path.
+so a native change never pays for the web target's existence.
+
+## Workflow
+
+Every commit passes all five.
+They are the bar, not a suggestion:
+
+```sh
+cargo fmt --all
+cargo clippy --all-targets --all-features
+cargo test --all-features
+cargo doc --no-deps
+cargo clippy --lib --target wasm32-unknown-unknown
+```
+
+The web check is the fifth because the platform split is code:
+a native-only change can still break the target that has no filesystem and no threads.
+CI runs the same five on every push and pull request.
+
+Commit messages: `scope: imperative summary`, the scope being the module,
+e.g. `render: bias marks in depth rather than in space`.
+
+A change to the design is not finished until this file reflects it, in the same commit.
+Where this file and the code disagree, one of them is a bug,
+and it is usually worth asking which.
 
 ## Anti-goals
 
-- No renderer specialized to a fixed intrinsic dimension or grade where the two reductions cover it.
+- No renderer specialized to a fixed intrinsic dimension or grade
+  where `realize`'s two reductions cover it.
   Marks chosen by the grade's reduction, primitives by the dimension's.
   No second pipeline for what is one technique at a different ink.
 - No web-specific logic outside `web.rs`.
@@ -505,11 +357,11 @@ the same way `studio` itself stays off the core's critical path.
   never a browser concern smeared through the render or model code.
 - No dimension dispatch outside the bake, and no grade dispatch outside the mark.
   A `match` on either anywhere else is the case distinction escaping its reduction.
-- No embedding leaking in outside the two seams.
-  No ambient assumption above dimension 3.
+- No reduction of a field living here.
+  If an exporter could not reach it, it belongs in `realize`, upstream.
 - No claiming metric use as the extrinsic divergence:
   the divergence is the embedding and the ambient space,
-  and saying otherwise misreads invariant 5.
-- Nothing transient here, exactly as in the parent:
+  and saying otherwise misreads the engine's invariant 5.
+- Nothing transient here, exactly as in the engine:
   no current state, no in-flight passes, no version pins written out,
   no roadmap phrased as a promise.

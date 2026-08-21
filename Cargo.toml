@@ -2,7 +2,15 @@
 name = "formoniq-studio"
 version = "0.1.0"
 edition = "2024"
+rust-version = "1.89"
+license = "MIT OR Apache-2.0"
+description = "Interactive viewer for formoniq: PDE solutions, meshes, simplicial manifolds and the differential forms on them, rendered natively or in the browser."
+repository = "https://github.com/luiswirth/formoniq-studio"
+readme = "README.md"
 publish = false
+
+# The engine is a separate repository, so this one is its own workspace root.
+[workspace]
 
 # `cdylib` is the wasm-bindgen output; `rlib` keeps the native binary and the
 # tests able to depend on the crate as a library. Native builds ignore the
@@ -11,16 +19,20 @@ publish = false
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-multialgebra = { path = "../multialgebra", version = "0.2.0" }
-# Internal workspace dependencies
-formoniq = { path = "../formoniq" }
-formoniq-realize = { path = "../realize" }
-derham = { path = "../derham", features = ["serde"] }
-glatt = { path = "../glatt" }
-simplicial = { path = "../simplicial", features = ["serde"] }
-regge = { path = "../regge", features = ["serde"] }
-coorder = { path = "../coorder" }
-metric = { path = "../metric" }
+# The engine. One git source pinned to one revision: the crates are a single
+# workspace upstream and only ever make sense as a set, so a partial bump is
+# not a thing to allow. Co-develop against a local checkout by patching the
+# source (`cargo --config .cargo/local.toml`, see the README), never by editing
+# these lines.
+formoniq = { git = "https://github.com/luiswirth/formoniq", rev = "b2dab1e8706191d0f505bff378c6b68505e7dd22" }
+formoniq-realize = { git = "https://github.com/luiswirth/formoniq", rev = "b2dab1e8706191d0f505bff378c6b68505e7dd22" }
+derham = { git = "https://github.com/luiswirth/formoniq", rev = "b2dab1e8706191d0f505bff378c6b68505e7dd22", features = ["serde"] }
+glatt = { git = "https://github.com/luiswirth/formoniq", rev = "b2dab1e8706191d0f505bff378c6b68505e7dd22" }
+simplicial = { git = "https://github.com/luiswirth/formoniq", rev = "b2dab1e8706191d0f505bff378c6b68505e7dd22", features = ["serde"] }
+regge = { git = "https://github.com/luiswirth/formoniq", rev = "b2dab1e8706191d0f505bff378c6b68505e7dd22", features = ["serde"] }
+coorder = { git = "https://github.com/luiswirth/formoniq", rev = "b2dab1e8706191d0f505bff378c6b68505e7dd22" }
+metric = { git = "https://github.com/luiswirth/formoniq", rev = "b2dab1e8706191d0f505bff378c6b68505e7dd22" }
+multialgebra = { git = "https://github.com/luiswirth/formoniq", rev = "b2dab1e8706191d0f505bff378c6b68505e7dd22" }
 # Pinned to match egui-wgpu 0.35's own wgpu dependency: the render pass and
 # command-buffer types crossing the egui/native boundary must be the same
 # `wgpu` crate, not just semver-compatible. Bump together with egui-wgpu.
