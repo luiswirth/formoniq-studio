@@ -24,15 +24,15 @@ crate-type = ["cdylib", "rlib"]
 # not a thing to allow. Co-develop against a local checkout by patching the
 # source (`cargo --config .cargo/local.toml`, see the README), never by editing
 # these lines.
-formoniq = { git = "https://github.com/luiswirth/formoniq", rev = "b2dab1e8706191d0f505bff378c6b68505e7dd22" }
-formoniq-realize = { git = "https://github.com/luiswirth/formoniq", rev = "b2dab1e8706191d0f505bff378c6b68505e7dd22" }
-derham = { git = "https://github.com/luiswirth/formoniq", rev = "b2dab1e8706191d0f505bff378c6b68505e7dd22", features = ["serde"] }
-glatt = { git = "https://github.com/luiswirth/formoniq", rev = "b2dab1e8706191d0f505bff378c6b68505e7dd22" }
-simplicial = { git = "https://github.com/luiswirth/formoniq", rev = "b2dab1e8706191d0f505bff378c6b68505e7dd22", features = ["serde"] }
-regge = { git = "https://github.com/luiswirth/formoniq", rev = "b2dab1e8706191d0f505bff378c6b68505e7dd22", features = ["serde"] }
-coorder = { git = "https://github.com/luiswirth/formoniq", rev = "b2dab1e8706191d0f505bff378c6b68505e7dd22" }
-metric = { git = "https://github.com/luiswirth/formoniq", rev = "b2dab1e8706191d0f505bff378c6b68505e7dd22" }
-multialgebra = { git = "https://github.com/luiswirth/formoniq", rev = "b2dab1e8706191d0f505bff378c6b68505e7dd22" }
+formoniq = { git = "https://github.com/luiswirth/formoniq", rev = "46955634723f7e15e2291b12891f72d21399b0e9" }
+formoniq-realize = { git = "https://github.com/luiswirth/formoniq", rev = "46955634723f7e15e2291b12891f72d21399b0e9" }
+derham = { git = "https://github.com/luiswirth/formoniq", rev = "46955634723f7e15e2291b12891f72d21399b0e9", features = ["serde"] }
+glatt = { git = "https://github.com/luiswirth/formoniq", rev = "46955634723f7e15e2291b12891f72d21399b0e9" }
+simplicial = { git = "https://github.com/luiswirth/formoniq", rev = "46955634723f7e15e2291b12891f72d21399b0e9", features = ["serde"] }
+regge = { git = "https://github.com/luiswirth/formoniq", rev = "46955634723f7e15e2291b12891f72d21399b0e9", features = ["serde"] }
+coorder = { git = "https://github.com/luiswirth/formoniq", rev = "46955634723f7e15e2291b12891f72d21399b0e9" }
+metric = { git = "https://github.com/luiswirth/formoniq", rev = "46955634723f7e15e2291b12891f72d21399b0e9" }
+multialgebra = { git = "https://github.com/luiswirth/formoniq", rev = "46955634723f7e15e2291b12891f72d21399b0e9" }
 # Pinned to match egui-wgpu 0.35's own wgpu dependency: the render pass and
 # command-buffer types crossing the egui/native boundary must be the same
 # `wgpu` crate, not just semver-compatible. Bump together with egui-wgpu.
