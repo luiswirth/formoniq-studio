@@ -6,10 +6,10 @@ use simplicial::Sign;
 use simplicial::linalg::{Matrix, Vector};
 use simplicial::topology::orientation::Orientation;
 
+use crate::realize::surface::Surface;
 use crate::ui::Selection;
 use derham::{Cochain, project::derham_map, section::CoordFieldExt};
 use multialgebra::{Blade, ExteriorGrade, Tensor, Variance};
-use realize::surface::Surface;
 use regge::coord::mesh::MeshCoords;
 use simplicial::{
   Dim,
@@ -265,7 +265,7 @@ impl Mark {
 }
 
 /// The display metadata a reconstructed field carries regardless of which
-/// render mark it lands in, everything [`Scene::field`] needs beyond the
+/// render mark it lands in, everything [`Scene::file`] needs beyond the
 /// cochain itself, bundled so the two independent `Option`s
 /// ([`ScalarField::time`]/[`ScalarField::dof`]) don't turn the
 /// constructor into an unreadable run of positional arguments.
@@ -756,7 +756,7 @@ impl Scene {
   /// $k = n-1$) a tangent line field, and a reduced grade $>= 2$ (only reachable
   /// at $n >= 4$) has no mark yet. The reduction is not applied here: the
   /// original cochain is stored whole, and the render mark reads it per cell at
-  /// draw time (see [`realize::reduce::corner_values`]).
+  /// draw time (see [`crate::realize::reduce::corner_values`]).
   ///
   /// The grade reduces against the surface's dimension, not the mesh's, and
   /// that is what makes the mark the mark of the thing on screen. A field on a
@@ -843,7 +843,7 @@ impl Scene {
 ///
 /// The scalar every scalar-consuming mark draws is `scalarize(F omega)`, and
 /// this is $F$. Each variant is total over grade and dimension, degenerating
-/// rather than being excluded: $dif omega = 0$ at $k = n$, and [`scalarize`]
+/// rather than being excluded: $dif omega = 0$ at $k = n$, and [`scalarize`](derham::reduce::scalarize)
 /// takes the resulting top or bottom grade uniformly. The axis is deliberately
 /// separate from the reduction: the operator is metric-free, the reduction is
 /// where the metric enters.

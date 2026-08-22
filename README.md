@@ -26,10 +26,11 @@ committing to an ambient position only at the last step.
 
 Ambient dimension is fixed at 3, the native space of the GPU,
 while intrinsic dimension and form grade stay general within it.
-Two reductions carry this, and both live upstream in the engine's `realize` crate,
-so an exporter and this viewer read a field the same way.
+Two reductions carry this.
 Form grade reduces to a render mark through the reduced grade min(k, n−k):
 a scalar density coloring, a glyph or particle line field, a standing-wave displacement height.
+That reduction lives upstream in the engine,
+so an exporter and this viewer read a field the same way.
 Intrinsic dimension reduces to a render primitive min(n, 2):
 a surface to wound triangles, a curve to segments, a point set to points,
 and a solid to the 2-simplices of its boundary.
@@ -66,7 +67,6 @@ in `.cargo/local.toml` (untracked, and read only when asked for):
 ```toml
 [patch."https://github.com/luiswirth/formoniq"]
 formoniq = { path = "../formoniq/crates/formoniq" }
-formoniq-realize = { path = "../formoniq/crates/realize" }
 # ... one line per engine crate in `Cargo.toml`
 ```
 

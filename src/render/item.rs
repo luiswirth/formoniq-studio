@@ -16,7 +16,7 @@ use wgpu::util::DeviceExt;
 
 use super::particles::ParticleBatch;
 use super::uniform::{GlyphMaterial, SegmentMaterial, SurfaceMaterial};
-use realize::bake::{BakedMesh, BakedVertex, GlyphInstance, PrimBatch, SegmentVertex};
+use crate::realize::bake::{BakedMesh, BakedVertex, GlyphInstance, PrimBatch, SegmentVertex};
 
 /// A `VERTEX` buffer holding `data`, never empty: a zero-length
 /// `create_buffer_init` is rejected, and an empty batch (a field with no
@@ -414,7 +414,7 @@ const GLYPH_CORNERS: u32 = 6;
 
 impl GlyphBatch {
   /// One instance per arrow, in a buffer sized by `capacity`, the lattice the
-  /// arrows are sampled on ([`realize::glyph::lattice_size`]). Sized by the
+  /// arrows are sampled on ([`crate::realize::glyph::lattice_size`]). Sized by the
   /// lattice rather than by `instances` because the arrows are a field-dependent
   /// subset of it: sizing to the first instant would leave a later one, with a
   /// direction where this one had none, nowhere to go.

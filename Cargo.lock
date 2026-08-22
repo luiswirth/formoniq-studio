@@ -537,7 +537,7 @@ dependencies = [
 [[package]]
 name = "coorder"
 version = "0.2.0"
-source = "git+https://github.com/luiswirth/formoniq?rev=46955634723f7e15e2291b12891f72d21399b0e9#46955634723f7e15e2291b12891f72d21399b0e9"
+source = "git+https://github.com/luiswirth/formoniq?rev=da584e84fab21f14731632be2712e5ec484f865d#da584e84fab21f14731632be2712e5ec484f865d"
 dependencies = [
  "nalgebra",
 ]
@@ -699,7 +699,7 @@ dependencies = [
 [[package]]
 name = "derham"
 version = "0.2.0"
-source = "git+https://github.com/luiswirth/formoniq?rev=46955634723f7e15e2291b12891f72d21399b0e9#46955634723f7e15e2291b12891f72d21399b0e9"
+source = "git+https://github.com/luiswirth/formoniq?rev=da584e84fab21f14731632be2712e5ec484f865d#da584e84fab21f14731632be2712e5ec484f865d"
 dependencies = [
  "approx",
  "coorder",
@@ -1202,7 +1202,7 @@ dependencies = [
 [[package]]
 name = "formoniq"
 version = "0.2.0"
-source = "git+https://github.com/luiswirth/formoniq?rev=46955634723f7e15e2291b12891f72d21399b0e9#46955634723f7e15e2291b12891f72d21399b0e9"
+source = "git+https://github.com/luiswirth/formoniq?rev=da584e84fab21f14731632be2712e5ec484f865d#da584e84fab21f14731632be2712e5ec484f865d"
 dependencies = [
  "approx",
  "coorder",
@@ -1223,24 +1223,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "formoniq-realize"
-version = "0.1.0"
-source = "git+https://github.com/luiswirth/formoniq?rev=46955634723f7e15e2291b12891f72d21399b0e9#46955634723f7e15e2291b12891f72d21399b0e9"
-dependencies = [
- "bytemuck",
- "coorder",
- "derham",
- "formoniq",
- "glatt",
- "metric",
- "multialgebra",
- "nalgebra",
- "rayon",
- "regge",
- "simplicial",
-]
-
-[[package]]
 name = "formoniq-studio"
 version = "0.1.0"
 dependencies = [
@@ -1258,7 +1240,6 @@ dependencies = [
  "egui-winit",
  "env_logger",
  "formoniq",
- "formoniq-realize",
  "getrandom 0.3.4",
  "glatt",
  "image",
@@ -1529,7 +1510,7 @@ checksum = "c426daf70099baff33fac0ba85151c42424861c56828cef9ba02dacb78eb6b26"
 [[package]]
 name = "glatt"
 version = "0.2.0"
-source = "git+https://github.com/luiswirth/formoniq?rev=46955634723f7e15e2291b12891f72d21399b0e9#46955634723f7e15e2291b12891f72d21399b0e9"
+source = "git+https://github.com/luiswirth/formoniq?rev=da584e84fab21f14731632be2712e5ec484f865d#da584e84fab21f14731632be2712e5ec484f865d"
 dependencies = [
  "approx",
  "coorder",
@@ -1838,7 +1819,7 @@ checksum = "a6cb138bb79a146c1bd460005623e142ef0181e3d0219cb493e02f7d08a35695"
 [[package]]
 name = "iterative"
 version = "0.2.0"
-source = "git+https://github.com/luiswirth/formoniq?rev=46955634723f7e15e2291b12891f72d21399b0e9#46955634723f7e15e2291b12891f72d21399b0e9"
+source = "git+https://github.com/luiswirth/formoniq?rev=da584e84fab21f14731632be2712e5ec484f865d#da584e84fab21f14731632be2712e5ec484f865d"
 dependencies = [
  "approx",
  "nalgebra",
@@ -2156,7 +2137,7 @@ dependencies = [
 [[package]]
 name = "metric"
 version = "0.2.0"
-source = "git+https://github.com/luiswirth/formoniq?rev=46955634723f7e15e2291b12891f72d21399b0e9#46955634723f7e15e2291b12891f72d21399b0e9"
+source = "git+https://github.com/luiswirth/formoniq?rev=da584e84fab21f14731632be2712e5ec484f865d#da584e84fab21f14731632be2712e5ec484f865d"
 dependencies = [
  "multialgebra",
  "multiindex",
@@ -2200,7 +2181,7 @@ dependencies = [
 [[package]]
 name = "multialgebra"
 version = "0.2.0"
-source = "git+https://github.com/luiswirth/formoniq?rev=46955634723f7e15e2291b12891f72d21399b0e9#46955634723f7e15e2291b12891f72d21399b0e9"
+source = "git+https://github.com/luiswirth/formoniq?rev=da584e84fab21f14731632be2712e5ec484f865d#da584e84fab21f14731632be2712e5ec484f865d"
 dependencies = [
  "multiindex",
  "nalgebra",
@@ -2214,7 +2195,7 @@ dependencies = [
 [[package]]
 name = "multiindex"
 version = "0.2.0"
-source = "git+https://github.com/luiswirth/formoniq?rev=46955634723f7e15e2291b12891f72d21399b0e9#46955634723f7e15e2291b12891f72d21399b0e9"
+source = "git+https://github.com/luiswirth/formoniq?rev=da584e84fab21f14731632be2712e5ec484f865d#da584e84fab21f14731632be2712e5ec484f865d"
 dependencies = [
  "num-integer",
  "serde",
@@ -3478,7 +3459,7 @@ checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
 [[package]]
 name = "regge"
 version = "0.2.0"
-source = "git+https://github.com/luiswirth/formoniq?rev=46955634723f7e15e2291b12891f72d21399b0e9#46955634723f7e15e2291b12891f72d21399b0e9"
+source = "git+https://github.com/luiswirth/formoniq?rev=da584e84fab21f14731632be2712e5ec484f865d#da584e84fab21f14731632be2712e5ec484f865d"
 dependencies = [
  "ciborium",
  "coorder",
@@ -3703,7 +3684,7 @@ checksum = "e3a9fe34e3e7a50316060351f37187a3f546bce95496156754b601a5fa71b76e"
 [[package]]
 name = "simplicial"
 version = "0.2.0"
-source = "git+https://github.com/luiswirth/formoniq?rev=46955634723f7e15e2291b12891f72d21399b0e9#46955634723f7e15e2291b12891f72d21399b0e9"
+source = "git+https://github.com/luiswirth/formoniq?rev=da584e84fab21f14731632be2712e5ec484f865d#da584e84fab21f14731632be2712e5ec484f865d"
 dependencies = [
  "approx",
  "ciborium",

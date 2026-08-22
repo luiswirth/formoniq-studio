@@ -24,12 +24,12 @@ fn no_vertex_displaces_past_its_reach() {
       ((i as f64) * 0.7).sin()
     }),
   );
-  let heights = realize::reduce::nodal_heights(&topology, &coords, &cochain);
+  let heights = formoniq_studio::realize::reduce::nodal_heights(&topology, &coords, &cochain);
   let peaks: Vec<f32> = heights.iter().map(|h| h.abs() as f32).collect();
 
   // The ceilings the bake itself derives, so the safety fraction is not
   // written down a second time here.
-  let ceilings: Vec<f32> = realize::bake::BakedMesh::new(&topology, &coords)
+  let ceilings: Vec<f32> = formoniq_studio::realize::bake::BakedMesh::new(&topology, &coords)
     .positions
     .iter()
     .map(|v| v.max_displacement)
