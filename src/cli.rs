@@ -11,12 +11,12 @@ use std::path::{Path, PathBuf};
 
 use clap::{Parser, Subcommand};
 use derham::Cochain;
+use derham::io::vtu;
 use formoniq_studio::export::{ExportSpec, export};
 use formoniq_studio::gallery::{
   BuiltinMesh, CochainSpec, EIGENMODES_NMODES, Evolution, GRID_DIM, MeshSource, NamedCochain,
   Param, QUOTIENT_CELLS, QuotientSurface, REFERENCE_CELL_DIM, Study,
 };
-use realize::io::vtu;
 use simplicial::Dim;
 
 #[derive(Parser)]

@@ -12,7 +12,7 @@ use bytemuck::Pod;
 use wgpu::util::DeviceExt;
 
 use super::advect::{AdvectParams, Cell, Particle, compute_bind_group_layout};
-use realize::advect::{AdvectBake, Seed};
+use crate::realize::advect::{AdvectBake, Seed};
 
 /// How long a particle lives, in frame steps, and how widely those lives are
 /// spread.

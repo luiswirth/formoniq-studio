@@ -17,18 +17,27 @@ The direction is strict, as it is inside the engine's own ladder:
 this repository depends on the engine and nothing there depends on it,
 which is what keeps the graphics stack out of the engine's build entirely.
 
-The engine's `crates/realize` is the crate directly below this one,
-and its `CLAUDE.md` carries the extrinsic side's design:
-the one inversion of the parent's intrinsic-first discipline,
-the bake (the seam out) and the two reductions, of grade to a mark and of dimension to a primitive.
-Read it before changing anything about what a field looks like.
-This file carries what is particular to the *viewer*.
+The extrinsic carve-out the engine's invariant 2 draws is a boundary of each of its crates,
+not a crate of its own:
+what becomes extrinsic is still *of* the object it was intrinsic on, and stays with it.
+A mesh read off disk is `regge::io`, a manifold together with the forms on it `derham::io`,
+and the grade reduction of a $k$-form is `derham::reduce`.
+So the viewer never holds the only copy of a reading of a field:
+an exporter reads the same one,
+which is what makes a disagreement between an external tool and the viewer
+a bug in one place instead of a drift between two.
+
+What is on this side is the render half, the `realize` module:
+the dimension reduction, the bake, and the marks over it,
+none of which has a consumer that is not a renderer.
+The moment one of them can be expressed with nothing downstream of it but a file,
+it belongs upstream instead.
 
 ## The seam in
 
 The embedding is not assumed diffusely throughout the viewer.
-It enters at the bake, which is `realize`'s,
-and intrinsic structure is carried as far toward the screen as it can go before that commits.
+It enters at the bake, and intrinsic structure is carried
+as far toward the screen as it can go before that commits.
 
 **`Scene` is the seam in:**
 it carries the engine's own types (`Complex`, `MeshCoords`, `Cochain`)
@@ -37,7 +46,10 @@ so the coloring, the displacement and the choice of render mark
 stay decisions of the viewer, made on the real object.
 
 Between it and the bake the discipline is lived, not hoped for:
-anything new belongs on that same spine,
+the curve integrator works in the barycentric charts of the atlas
+and crosses cells through the `Transition`,
+committing to an ambient position only where it must.
+Anything new belongs on that same spine,
 intrinsic until the bake, extrinsic only after it.
 An exporter and this viewer are peers over the same reduction,
 which is what makes an external tool and the viewer agree about what a field looks like;
@@ -45,13 +57,90 @@ a reduction that only the viewer can reach has been put in the wrong repository.
 
 ## One renderer across dimension and grade
 
-Ambient dimension is $3$, `realize`'s deliberate constant and the native space of the GPU.
+**Ambient dimension is $3$, by deliberate constant,** not a limit to apologize for.
+It is the native space of the GPU,
+so $RR^2$ is the codimension case, embedded in the $z = 0$ plane, and $RR^1$ a further one.
+A lower-dimensional cell embeds as itself there, exactly as a flat surface does.
 Intrinsic dimension and form grade stay agnostic on the range it allows.
 A point set, a curve and a surface are one pipeline across grades, not three renderers:
 a curve renderer split off from a surface renderer
 would be the `if dim == 3` of the engine, reappearing here.
 
-Each case distinction is confined to its own reduction, both of which are `realize`'s,
+**Two reductions carry that, and they are the same move made on the two axes:**
+
+- **Intrinsic dimension reduces to a render primitive:**
+  an $n$-manifold to the primitive $min(n, 2)$ in the bake,
+  a surface to wound triangles, a curve to segments, a point cloud to points,
+  and a solid to the 2-simplices of its boundary,
+  all of it an observer in $RR^3$ can see.
+  This one is the viewer's own, and the bake is where it is confined.
+- **Grade reduces to a mark:**
+  a $k$-form to its reduced grade $min(k, n-k)$ through the Hodge star,
+  a scalar density at 0 and a tangent line field at 1.
+  The reduction is `derham::reduce`, upstream, and what is here is only
+  which mark is drawn on it and how it is read per rendered corner.
+  Where a gauge is genuinely free,
+  prefer making the mark independent of it over picking a value for it.
+  The rigid cell displacement $d_K n_K$ is the model:
+  the density and the cell normal flip together, so the motion is invariant.
+
+**The two compose, and the order is fixed: dimension first, grade second.**
+The object a mark is a mark *of* is the render surface
+(the mesh itself below $n = 3$, the boundary $diff M$ for a solid),
+so the $n$ in $min(k, n-k)$ is the *surface's*, never the mesh's.
+`Surface` is that reduction named once,
+and it is a genuine manifold one dimension down,
+with its own complex, orientation and metric.
+A field reaches it by its **trace** $i^*: C^k (M) -> C^k (diff M)$, a cochain map,
+hence a real Whitney form on $diff M$ rather than a resampling or a nodal recovery.
+
+Getting the order backwards is what a dimension-blind mark looks like:
+a $2$-form on a solid reduces to grade 1 against the volume (arrows)
+but to grade 0 against the boundary (a density),
+and only the latter is a claim about anything on screen:
+a flux has no direction in the surface carrying it.
+An arrow glyph is the sharp case,
+because a flat mark needs a plane to lie in and a determined perpendicular,
+and a tetrahedron supplies neither.
+
+**The trace is total in grade but vanishes at the top**, since $C^n (diff M) = 0$.
+A top-grade density is a *volume* quantity,
+and reading it on the boundary is a sampling of the cells behind it, never a trace:
+the two must not be conflated,
+and a mark that needs the volume says so rather than tracing to zero and drawing nothing.
+Volume marks (a camera-facing glyph, a slice) are where this extends.
+They are a different mark with a different frame, not this one run on cells.
+
+**A field is read where it is single-valued, and never averaged into looking continuous.**
+A reduced-grade Whitney form is discontinuous across cells,
+only the tangential part of a section being chart-independent,
+so incident cells disagree at a shared vertex.
+Its **colormap** value is therefore read once *per rendered corner in the corner's own cell*,
+so a cell the form vanishes on stays exactly black
+instead of inheriting a neighbor's value through a shared vertex.
+A per-vertex tint cannot state this
+and silently bleeds a DOF's magnitude into every incident cell.
+
+The **displacement height** follows the field's own continuity,
+by the same reduction that picks the mark rather than by a second rule.
+$cal(W) Lambda^0$ is $P_1$:
+a vertex has one value, the nodal recovery *is* the field,
+and the surface displaces as one connected sheet.
+$cal(W) Lambda^n$ is $P_0$:
+the reduced density is constant per cell and discontinuous across it,
+so there is no continuous height to ride
+and each cell displaces **rigidly**, by its own constant.
+That tears the surface, and the tear is the mark:
+cells separate by exactly the jump across their shared face,
+so the discontinuity becomes visible space and the surface re-closes under refinement.
+Smoothing it instead would show one field flat-shaded in color and smooth in shape,
+two contradictory claims in one frame.
+A nodal average where the field is genuinely discontinuous is a recovery,
+and presenting a recovery as the field is the thing to avoid.
+The shared 1-skeleton cannot tear without being duplicated,
+so the segment marks keep the continuous recovery at every grade.
+
+Each case distinction is confined to its own reduction,
 never smeared through the renderer,
 which sees only which *items* a frame has, never why.
 The consequence is that one segment pipeline serves the wireframe overlay,
@@ -76,6 +165,30 @@ These say who may know what, and they bind the same way the parent's invariants 
   The gallery and the scene are the mathematics and the state of the viewer.
   Neither names a device, a buffer or a pipeline.
   What is shown is decided there and baked afterward, never the other way round.
+- **`realize` is where the embedding is spent, and it draws nothing:**
+  It is the render half, the part of the extrinsic carve-out
+  whose only consumer is a renderer:
+  the dimension reduction, the bake, and the marks over it.
+  Above the bake everything is a pure transformation of the model's own types,
+  below it there is ambient geometry and no FEEC type at all,
+  and a device, a buffer or a pipeline is `render`'s throughout.
+  Its modules answer one sentence each:
+
+  | module | is |
+  | --- | --- |
+  | `surface` | the render surface, the manifold a field is seen on: the mesh below $n = 3$ and the boundary $diff M$ above, carrying its own complex, orientation and metric |
+  | `bake` | the seam out, a complex embedded in $RR^3$ reduced to the primitives a rasterizer draws, and the one place the dimension case distinction lives |
+  | `reduce` | the render readings of a reduced form: the colormap value at a rendered corner, and the displacement height of the surface |
+  | `glyph` | a reduced grade-1 field read pointwise, on the barycentric lattice of each cell |
+  | `advect` | the bake behind the particle flow, the generator of the flow along that field |
+  | `deposit` | the deposit atlas, a population's trails laid out in the charts rather than on the screen |
+  | `volume` | a field on a solid sampled onto a grid, the model half of the participating medium |
+  | `obj` | a leaf of the bake, the baked surface written as a Wavefront OBJ |
+
+  The split against the shader is uniform:
+  what needs a metric, a Whitney basis or a chart transition is computed here,
+  and what crosses to the GPU is linear algebra on a simplex.
+  A shader that has to know what a form is has been handed the wrong bake.
 - **The display is the callers' shared reduction:**
   What turns a scene and a selection into a draw list
   (the bake, the materials, the framing, the object-intrinsic fractions the marks are scaled by)
@@ -237,8 +350,38 @@ The mathematics decides *what* is drawn
 (the reduced grade picks the mark, the eigenvalue drives the standing wave)
 and the graphics craft decides *how well*.
 
-Three durable conventions, kept general on purpose:
+Five durable conventions, kept general on purpose:
 
+- **A mark is sized by the length its own question is about:**
+  Two scales are available and they are not interchangeable:
+  the object's *extent* and the mesh's *mean edge length*.
+  A quantity that should read the same however finely the object is triangulated
+  (how far a standing wave swells, how fast a tracer crosses, how dense the glyph lattice is)
+  is a fraction of the extent.
+  A mark that draws the mesh's own features
+  (the stroke of an edge, the size of a per-cell mark)
+  is a fraction of the edge length, or of a length already derived from it.
+  Getting this backwards reads correctly at exactly one refinement:
+  tie a stroke to the extent and refining the mesh shrinks the cells while the strokes stay put,
+  until the wireframe is a solid mass and the arrows are stubs.
+  A mark whose every dimension is a proportion of one cell-derived length is self-similar,
+  and then there is no resolution at which it can be wrong.
+- **A displacement is bounded by scaling it, never by clamping it:**
+  The bound is the mesh's *reach*,
+  the distance to its own medial axis, below which the normal offset is still an embedding.
+  Curvature radius is only half of that bound, the local half.
+  The other half is the bottleneck, how far the surface is from a different sheet of itself,
+  and it is the half that thin features live in.
+  A flat plate has infinite curvature radius and reach $t \/ 2$,
+  so a curvature-only ceiling lets its two faces pass through each other.
+  Given the bound, the amplitude is one global scalar chosen so no vertex exceeds it.
+  A per-vertex clamp is the wrong instrument:
+  it binds at a different value at every vertex,
+  so it flattens the field in patches
+  and seams the surface between clamped and unclamped neighbors,
+  which is not a bounded deformation but a different one.
+  Scaling is the operation an eigenmode is indifferent to, being defined up to a scalar,
+  so it bounds the picture without changing which mode the picture is of.
 - **A mark drawn on a surface is biased in depth, never displaced in space:**
   A glyph in its cell and a wireframe edge along its simplex
   are coplanar with the fill and must win the depth comparison.
@@ -348,7 +491,7 @@ and it is usually worth asking which.
 ## Anti-goals
 
 - No renderer specialized to a fixed intrinsic dimension or grade
-  where `realize`'s two reductions cover it.
+  where the two reductions cover it.
   Marks chosen by the grade's reduction, primitives by the dimension's.
   No second pipeline for what is one technique at a different ink.
 - No web-specific logic outside `web.rs`.
@@ -358,7 +501,10 @@ and it is usually worth asking which.
 - No dimension dispatch outside the bake, and no grade dispatch outside the mark.
   A `match` on either anywhere else is the case distinction escaping its reduction.
 - No reduction of a field living here.
-  If an exporter could not reach it, it belongs in `realize`, upstream.
+  If an exporter could want it, it belongs upstream, with the object it is a reduction of.
+- No graphics dependency in the `realize` module.
+  It ends at the bake and its marks;
+  a device, a buffer or a pipeline is `render`'s.
 - No claiming metric use as the extrinsic divergence:
   the divergence is the embedding and the ambient space,
   and saying otherwise misreads the engine's invariant 5.

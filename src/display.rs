@@ -14,6 +14,9 @@
 //! what one field decides, its materials, its own geometry, its attribute
 //! stream. Switching modes rewrites the second alone.
 
+use crate::realize;
+use crate::realize::bake::{self, BakedMesh};
+use crate::realize::deposit::DepositLayout;
 use crate::render::{
   GpuContext,
   camera::Camera,
@@ -25,8 +28,6 @@ use crate::render::{
 };
 use crate::scene::Scene;
 use crate::ui::{FieldView, MeshView, Post, Selection};
-use realize::bake::{self, BakedMesh};
-use realize::deposit::DepositLayout;
 use regge::coord::locate::PointLocator;
 
 /// The exposure the scene's radiance is read at, before the display transform.
@@ -434,7 +435,7 @@ pub(crate) struct FieldAttributes {
 /// defined up to a scalar, so a global $A$ changes nothing about which mode is
 /// shown, only how far it swings. The displaced surface stays exactly $x + A f
 /// (x) n(x)$ with the field's own shape intact, and the reach bound
-/// ([`vertex_reach`](realize::reach::vertex_reach)) is what makes
+/// ([`vertex_reach`](regge::coord::reach::vertex_reach)) is what makes
 /// that map an embedding, no fold, no self-intersection.
 ///
 /// The maximum is over the field's whole evolution, not its representative

@@ -231,7 +231,7 @@ impl BuiltinMesh {
       Format::Obj => {
         let text = std::str::from_utf8(entry.bytes)
           .map_err(|e| format!("{}: not UTF-8 ({e})", self.label()))?;
-        realize::io::obj::parse(text).map_err(|e| format!("{}: {e}", self.label()))
+        regge::io::obj::parse(text).map_err(|e| format!("{}: {e}", self.label()))
       }
       Format::Gmsh => regge::io::gmsh::gmsh2coord_complex(entry.bytes)
         .map_err(|e| format!("{}: {e}", self.label())),

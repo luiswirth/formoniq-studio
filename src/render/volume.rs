@@ -23,7 +23,7 @@
 use bytemuck::{Pod, Zeroable};
 
 use super::{color_target, primitive, shader_module, uniform::UniformBinding};
-use realize::volume::VolumeGrid;
+use crate::realize::volume::VolumeGrid;
 
 /// The edge, in fine voxels, of a block in the coarse empty-space grid. Larger
 /// blocks skip vacuum in fewer iterations but resolve the medium's boundary more

@@ -11,6 +11,7 @@
 //! decomposition splits orthogonally, and every Whitney-basis field bakes.
 
 use derham::{Cochain, interpolate::interpolant::WhitneyInterpolant, section::SectionOps};
+use formoniq_studio::realize::reduce::{corner_values, nodal_heights, surface_corner_heights};
 use formoniq_studio::{
   demos,
   gallery::MeshSource,
@@ -21,7 +22,6 @@ use formoniq_studio::{
   ui::Selection,
 };
 use nalgebra as na;
-use realize::reduce::{corner_values, nodal_heights, surface_corner_heights};
 use regge::coord::mesh::MeshCoords;
 use simplicial::{
   Dim,
@@ -182,7 +182,7 @@ fn advection_carries_the_bump_without_losing_it() {
 fn top_grade_displacement_is_constant_within_each_cell() {
   let (topology, coords) = regge::mesher::sphere::mesh_sphere_surface(1);
   let scene = Scene::eigenmodes(&topology, &coords, topology.dim(), 2);
-  let baked = realize::bake::BakedMesh::new(&scene.topology, &scene.coords);
+  let baked = formoniq_studio::realize::bake::BakedMesh::new(&scene.topology, &scene.coords);
   let top = scene.fields.first().expect("a top-grade scalar field");
   let heights = surface_corner_heights(
     &scene.topology,
@@ -207,7 +207,7 @@ fn top_grade_displacement_is_constant_within_each_cell() {
 fn grade_zero_displacement_agrees_at_a_shared_vertex() {
   let (topology, coords) = regge::mesher::sphere::mesh_sphere_surface(1);
   let scene = Scene::eigenmodes(&topology, &coords, Dim::ZERO, 2);
-  let baked = realize::bake::BakedMesh::new(&scene.topology, &scene.coords);
+  let baked = formoniq_studio::realize::bake::BakedMesh::new(&scene.topology, &scene.coords);
   let scalar = scene.fields.first().expect("a grade-0 field");
   let heights = surface_corner_heights(
     &scene.topology,
@@ -650,7 +650,7 @@ fn triforce_cochains_are_three_named_line_fields() {
 fn grade_top_whitney_basis_stars_to_a_constant_nonzero_density() {
   let scene = Scene::whitney_basis(2);
   let density = scene.fields.last().unwrap();
-  let baked = realize::bake::BakedMesh::new(&scene.topology, &scene.coords);
+  let baked = formoniq_studio::realize::bake::BakedMesh::new(&scene.topology, &scene.coords);
   let colors = corner_values(
     &scene.topology,
     &scene.coords,
@@ -672,7 +672,7 @@ fn grade_top_whitney_basis_stars_to_a_constant_nonzero_density() {
 fn whitney_basis_support_is_exactly_its_dof_cells() {
   let (topology, coords) = demos::triforce();
   let scene = Scene::whitney_basis_mesh(topology, coords);
-  let baked = realize::bake::BakedMesh::new(&scene.topology, &scene.coords);
+  let baked = formoniq_studio::realize::bake::BakedMesh::new(&scene.topology, &scene.coords);
   let n = scene.topology.dim();
 
   let basis = scene
@@ -725,7 +725,7 @@ fn whitney_basis_support_is_exactly_its_dof_cells() {
 /// one segment height per mesh vertex.
 #[test]
 fn every_whitney_basis_field_bakes() {
-  use realize::bake::{BakedMesh, PrimBatch};
+  use formoniq_studio::realize::bake::{BakedMesh, PrimBatch};
   for dim in 1..=3 {
     let scene = Scene::whitney_basis(dim);
     assert!(!scene.fields.is_empty());

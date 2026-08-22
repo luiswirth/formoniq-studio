@@ -13,6 +13,7 @@ pub mod display;
 #[cfg(not(target_arch = "wasm32"))]
 pub mod export;
 pub mod gallery;
+pub mod realize;
 pub mod render;
 pub mod scene;
 pub mod solve;
