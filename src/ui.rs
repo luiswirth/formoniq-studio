@@ -642,7 +642,7 @@ fn commit_slider<Num: egui::emath::Numeric>(
 ///
 /// This is where [`Study`]'s variant parameters become editable, the browser
 /// picks which study, and this edits the one picked, the split the crate's
-/// `CLAUDE.md` draws between the two panels.
+/// `AGENTS.md` draws between the two panels.
 /// One tab per grade of the de Rham complex, for a study posed at a single
 /// grade. Every grade is offered, the top grade through its Hodge star just
 /// like grade 0. A grade change commits at once: it is a different problem,
@@ -813,7 +813,7 @@ pub(crate) fn panel(ui: &mut egui::Ui, model: &PanelModel) -> PanelResponse {
   // mode anything stores: below this width the two sidebars cannot dock beside
   // a viewport worth looking at, so they stop being docked. Their content is
   // untouched, the panel taxonomy still mirrors the two objects on screen
-  // (see this crate's CLAUDE.md). What changes is only whether a panel sits
+  // (see this crate's AGENTS.md). What changes is only whether a panel sits
   // beside the scene or over it.
   let compact = ui.available_width() < COMPACT_WIDTH;
   // What the layout does when the reader has not said: dock both where there is
@@ -1101,7 +1101,7 @@ pub(crate) fn panel(ui: &mut egui::Ui, model: &PanelModel) -> PanelResponse {
 
         // The study section: the equation it solves, then its own editable
         // parameters. The grade tabs, the mode count, the sampling steps, the
-        // knobs of `Study`'s variant, edited here where the crate's CLAUDE.md
+        // knobs of `Study`'s variant, edited here where the crate's AGENTS.md
         // says they live. A committed edit re-requests the study, which
         // re-solves it; while it does, the spinner below replaces the picker.
         section(ui, "Study", |ui| {
