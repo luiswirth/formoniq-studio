@@ -10,7 +10,7 @@ and a way to see the abstractions directly.
 
 [`formoniq`](https://github.com/luiswirth/formoniq) is a separate repository,
 depended on as one git source pinned to one revision.
-Its `CLAUDE.md` still governs here:
+Its `AGENTS.md` still governs here:
 its invariants, conventions and house style bind unchanged,
 and a concept expressible without a renderer belongs there rather than here.
 The direction is strict, as it is inside the engine's own ladder:

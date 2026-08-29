@@ -35,7 +35,7 @@ Intrinsic dimension reduces to a render primitive min(n, 2):
 a surface to wound triangles, a curve to segments, a point set to points,
 and a solid to the 2-simplices of its boundary.
 
-`CLAUDE.md` documents the design in full.
+`AGENTS.md` documents the design in full.
 
 ## Running it
 
