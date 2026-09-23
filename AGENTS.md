@@ -39,7 +39,7 @@ The embedding is not assumed diffusely throughout the viewer.
 It enters at the bake, and intrinsic structure is carried
 as far toward the screen as it can go before that commits.
 
-**`Scene` is the seam in:**
+`Scene` is the seam in:
 it carries the engine's own types (`Complex`, `MeshCoords`, `Cochain`)
 rather than a lossy export format,
 so the coloring, the displacement and the choice of render mark
@@ -57,7 +57,7 @@ a reduction that only the viewer can reach has been put in the wrong repository.
 
 ## One renderer across dimension and grade
 
-**Ambient dimension is $3$, by deliberate constant,** not a limit to apologize for.
+Ambient dimension is $3$, by deliberate constant, not a limit to apologize for.
 It is the native space of the GPU,
 so $RR^2$ is the codimension case, embedded in the $z = 0$ plane, and $RR^1$ a further one.
 A lower-dimensional cell embeds as itself there, exactly as a flat surface does.
@@ -66,15 +66,15 @@ A point set, a curve and a surface are one pipeline across grades, not three ren
 a curve renderer split off from a surface renderer
 would be the `if dim == 3` of the engine, reappearing here.
 
-**Two reductions carry that, and they are the same move made on the two axes:**
+Two reductions carry that, and they are the same move made on the two axes:
 
-- **Intrinsic dimension reduces to a render primitive:**
+- Intrinsic dimension reduces to a render primitive:
   an $n$-manifold to the primitive $min(n, 2)$ in the bake,
   a surface to wound triangles, a curve to segments, a point cloud to points,
   and a solid to the 2-simplices of its boundary,
   all of it an observer in $RR^3$ can see.
   This one is the viewer's own, and the bake is where it is confined.
-- **Grade reduces to a mark:**
+- Grade reduces to a mark:
   a $k$-form to its reduced grade $min(k, n-k)$ through the Hodge star,
   a scalar density at 0 and a tangent line field at 1.
   The reduction is `derham::reduce`, upstream, and what is here is only
@@ -84,14 +84,14 @@ would be the `if dim == 3` of the engine, reappearing here.
   The rigid cell displacement $d_K n_K$ is the model:
   the density and the cell normal flip together, so the motion is invariant.
 
-**The two compose, and the order is fixed: dimension first, grade second.**
+The two compose, and the order is fixed: dimension first, grade second.
 The object a mark is a mark *of* is the render surface
 (the mesh itself below $n = 3$, the boundary $diff M$ for a solid),
 so the $n$ in $min(k, n-k)$ is the *surface's*, never the mesh's.
 `Surface` is that reduction named once,
 and it is a genuine manifold one dimension down,
 with its own complex, orientation and metric.
-A field reaches it by its **trace** $i^*: C^k (M) -> C^k (diff M)$, a cochain map,
+A field reaches it by its trace $i^*: C^k (M) -> C^k (diff M)$, a cochain map,
 hence a real Whitney form on $diff M$ rather than a resampling or a nodal recovery.
 
 Getting the order backwards is what a dimension-blind mark looks like:
@@ -103,7 +103,7 @@ An arrow glyph is the sharp case,
 because a flat mark needs a plane to lie in and a determined perpendicular,
 and a tetrahedron supplies neither.
 
-**The trace is total in grade but vanishes at the top**, since $C^n (diff M) = 0$.
+The trace is total in grade but vanishes at the top, since $C^n (diff M) = 0$.
 A top-grade density is a *volume* quantity,
 and reading it on the boundary is a sampling of the cells behind it, never a trace:
 the two must not be conflated,
@@ -111,17 +111,17 @@ and a mark that needs the volume says so rather than tracing to zero and drawing
 Volume marks (a camera-facing glyph, a slice) are where this extends.
 They are a different mark with a different frame, not this one run on cells.
 
-**A field is read where it is single-valued, and never averaged into looking continuous.**
+A field is read where it is single-valued, and never averaged into looking continuous.
 A reduced-grade Whitney form is discontinuous across cells,
 only the tangential part of a section being chart-independent,
 so incident cells disagree at a shared vertex.
-Its **colormap** value is therefore read once *per rendered corner in the corner's own cell*,
+Its colormap value is therefore read once *per rendered corner in the corner's own cell*,
 so a cell the form vanishes on stays exactly black
 instead of inheriting a neighbor's value through a shared vertex.
 A per-vertex tint cannot state this
 and silently bleeds a DOF's magnitude into every incident cell.
 
-The **displacement height** follows the field's own continuity,
+The displacement height follows the field's own continuity,
 by the same reduction that picks the mark rather than by a second rule.
 $cal(W) Lambda^0$ is $P_1$:
 a vertex has one value, the nodal recovery *is* the field,
@@ -129,7 +129,7 @@ and the surface displaces as one connected sheet.
 $cal(W) Lambda^n$ is $P_0$:
 the reduced density is constant per cell and discontinuous across it,
 so there is no continuous height to ride
-and each cell displaces **rigidly**, by its own constant.
+and each cell displaces rigidly, by its own constant.
 That tears the surface, and the tear is the mark:
 cells separate by exactly the jump across their shared face,
 so the discontinuity becomes visible space and the surface re-closes under refinement.
@@ -161,11 +161,11 @@ and every metric here is the one the embedding already induces.
 The two seams say where the embedding enters.
 These say who may know what, and they bind the same way the parent's invariants do:
 
-- **The model is GPU-free:**
+- The model is GPU-free:
   The gallery and the scene are the mathematics and the state of the viewer.
   Neither names a device, a buffer or a pipeline.
   What is shown is decided there and baked afterward, never the other way round.
-- **`realize` is where the embedding is spent, and it draws nothing:**
+- `realize` is where the embedding is spent, and it draws nothing:
   It is the render half, the part of the extrinsic carve-out
   whose only consumer is a renderer:
   the dimension reduction, the bake, and the marks over it.
@@ -189,7 +189,7 @@ These say who may know what, and they bind the same way the parent's invariants 
   what needs a metric, a Whitney basis or a chart transition is computed here,
   and what crosses to the GPU is linear algebra on a simplex.
   A shader that has to know what a form is has been handed the wrong bake.
-- **The display is the callers' shared reduction:**
+- The display is the callers' shared reduction:
   What turns a scene and a selection into a draw list
   (the bake, the materials, the framing, the object-intrinsic fractions the marks are scaled by)
   belongs to neither caller.
@@ -200,7 +200,7 @@ These say who may know what, and they bind the same way the parent's invariants 
   The corollary is the CLI's:
   nothing the code can decide from the object or the context is asked of the user,
   because a knob with one right answer only lets the answer be wrong.
-- **What is asked divides by the object it reads:**
+- What is asked divides by the object it reads:
   Two objects are on screen (the mesh, and the field read on it)
   and `MeshDisplay`/`FieldDisplay` is already that split,
   so the settings mirror the seam rather than laying a second taxonomy over it.
@@ -214,21 +214,21 @@ These say who may know what, and they bind the same way the parent's invariants 
 
   What builds the object and what draws it are the two sidebars,
   and they keep the two questions apart:
-  the **browser** picks the point in `MeshSource × Study` (which mesh, which computation)
-  and the **inspector** edits the parameters of the study picked there
+  the browser picks the point in `MeshSource × Study` (which mesh, which computation)
+  and the inspector edits the parameters of the study picked there
   and the display of the two objects it produced.
   `Study`'s variant parameters (the eigenmode grade and count, a trajectory's sampling)
   are the inspector's, not the browser's,
   because they are knobs *on* the chosen study rather than the choice of it.
   An edit that drives a re-solve commits on release, not mid-drag,
   so the background solve fires once.
-  What belongs to **neither** object,
+  What belongs to neither object,
   reading and writing files,
   and the view shell itself
   (which sidebars show, the projection, the light ladder, re-framing the camera),
-  is a **menu bar**, the conventional home a reader reaches for these by reflex,
+  is a menu bar, the conventional home a reader reaches for these by reflex,
   and the one place a command that is not a property of the mesh or the field is allowed to live.
-- **The renderer sees baked geometry and explicit time, and nothing else:**
+- The renderer sees baked geometry and explicit time, and nothing else:
   No FEEC types, no clock, no window, no surface.
   Time is an argument,
   so the interactive loop passes wall-clock seconds
@@ -243,7 +243,7 @@ These say who may know what, and they bind the same way the parent's invariants 
   so the number of things on screen is the caller's,
   never a fixed set the renderer declares.
 
-  **A simulation is stepped to an instant, not evaluated at one**,
+  A simulation is stepped to an instant, not evaluated at one,
   and that is the one honest extension of "time is an argument".
   A standing wave is a function of $t$, so any frame can be asked for directly.
   A mark that carries state (an advected population) has no such closed form,
@@ -256,7 +256,7 @@ These say who may know what, and they bind the same way the parent's invariants 
   so that a given count means the same picture to a window and to an exporter.
   A mark that cannot promise that does not belong in the frame graph.
 
-- **Radiance is the scene's, the display's range is the target's, and one pass crosses between them:**
+- Radiance is the scene's, the display's range is the target's, and one pass crosses between them:
   The scene target is float and unbounded because additive marks accumulate:
   clipping at the blend destroys the very quantity the mark is made of.
   Everything that must happen in radiance (filtering, spilling light) happens before the crossing.
@@ -274,7 +274,7 @@ These say who may know what, and they bind the same way the parent's invariants 
   for what is being looked at,
   which is exactly the kind of question the code cannot settle from the object,
   and therefore one of the few the viewer is asked.
-- **State lives on the manifold, the screen is presentation only:**
+- State lives on the manifold, the screen is presentation only:
   Screen-space passes are not suspect in themselves,
   bloom, supersampling and the tone map are screen-space and correctly so,
   because they model the observation (the lens, the eye), never the field.
@@ -289,8 +289,8 @@ These say who may know what, and they bind the same way the parent's invariants 
   it would bake the camera into the state,
   and every orbit or export would smear a history that was never the field's.
   The test is the same cut the radiance/display split makes, extended along time.
-- **The UI is a pure function of the model,** returning requested changes, not a mutator of it.
-- **Layout answers to the window, never to the platform:**
+- The UI is a pure function of the model, returning requested changes, not a mutator of it.
+- Layout answers to the window, never to the platform:
   What a narrow viewport changes
   is whether a sidebar is *docked beside* the scene or *laid over* it,
   never what the panels contain, and never which panel a control belongs to,
@@ -301,7 +301,7 @@ These say who may know what, and they bind the same way the parent's invariants 
   A narrow desktop window gets exactly what a phone gets:
   there is no mobile build, only a narrow one.
 
-  **The sidebars collapse at every width, and the layout only supplies the default.**
+  The sidebars collapse at every width, and the layout only supplies the default.
   Wanting the controls out of the way to look at the scene
   is not something only a small screen wants,
   so the toggles are always there.
@@ -322,7 +322,7 @@ A `Preset` is a named point in that product together with the field it opens on:
 selecting one sets the two axes and the selection,
 and everything afterward is the ordinary platform.
 
-**The shipped meshes are the asset directory, not a list of them.**
+The shipped meshes are the asset directory, not a list of them.
 `build.rs` enumerates `assets/meshes` and generates the table the picker and the CLI read,
 so a mesh is added by dropping the file in:
 its extension picks the reader, its stem is its name.
@@ -352,7 +352,7 @@ and the graphics craft decides *how well*.
 
 Five durable conventions, kept general on purpose:
 
-- **A mark is sized by the length its own question is about:**
+- A mark is sized by the length its own question is about:
   Two scales are available and they are not interchangeable:
   the object's *extent* and the mesh's *mean edge length*.
   A quantity that should read the same however finely the object is triangulated
@@ -366,7 +366,7 @@ Five durable conventions, kept general on purpose:
   until the wireframe is a solid mass and the arrows are stubs.
   A mark whose every dimension is a proportion of one cell-derived length is self-similar,
   and then there is no resolution at which it can be wrong.
-- **A displacement is bounded by scaling it, never by clamping it:**
+- A displacement is bounded by scaling it, never by clamping it:
   The bound is the mesh's *reach*,
   the distance to its own medial axis, below which the normal offset is still an embedding.
   Curvature radius is only half of that bound, the local half.
@@ -382,7 +382,7 @@ Five durable conventions, kept general on purpose:
   which is not a bounded deformation but a different one.
   Scaling is the operation an eigenmode is indifferent to, being defined up to a scalar,
   so it bounds the picture without changing which mode the picture is of.
-- **A mark drawn on a surface is biased in depth, never displaced in space:**
+- A mark drawn on a surface is biased in depth, never displaced in space:
   A glyph in its cell and a wireframe edge along its simplex
   are coplanar with the fill and must win the depth comparison.
   That is a claim about $z$ alone,
@@ -397,7 +397,7 @@ Five durable conventions, kept general on purpose:
   (there is nothing to slide against and nothing in front to pierce),
   so this is a fault that only a solid's boundary reveals,
   and it is why the convention is written down rather than rediscovered.
-- **Shaders are checked by the test suite**, not only at pipeline creation,
+- Shaders are checked by the test suite, not only at pipeline creation,
   so a broken shader fails `cargo test` rather than the running viewer.
   The check runs naga's frontend (the one the *native* build uses),
   so it catches parse and validation errors
@@ -406,14 +406,14 @@ Five durable conventions, kept general on purpose:
   a shader that validates and runs on Chrome can still fail there
   ("Vertex library failed creation" is its generic symptom).
   The concrete rule this cost us,
-  **no pipeline-overridable `override` constants specialized through the pipeline `constants` map**:
+  no pipeline-overridable `override` constants specialized through the pipeline `constants` map:
   WebKit fails to specialize them.
   Bake such a value into the WGSL as a `const` from the Rust side instead
   (see `render::ssaa_prelude`).
   WebKit is the strict oracle.
   When a shader change is non-trivial,
   it is the browser, not `cargo test`, that has the last word.
-- **The graphics stack is pinned as a unit:**
+- The graphics stack is pinned as a unit:
   The types crossing the boundary between the UI layer and the renderer
   must come from the *same* underlying GPU crate, not merely semver-compatible versions.
   Bump them together, and let the build enforce it.
@@ -422,7 +422,7 @@ Five durable conventions, kept general on purpose:
 
 The viewer runs native and on the web (`wasm32`, WebGPU), from the same code.
 The split is a discipline, not a fork.
-**Everything browser-specific is confined to `web.rs`**:
+Everything browser-specific is confined to `web.rs`:
 the `wasm-bindgen` entry point, mounting winit's canvas into the document,
 and bridging the *async* GPU bootstrap back into the event loop
 (device and surface creation cannot block the browser,
@@ -433,11 +433,11 @@ never web logic interleaved with native.
 
 The web is the constrained side, and the constraints are honest, not worked around:
 
-- **No filesystem, no subprocess:**
+- No filesystem, no subprocess:
   OBJ loading, PNG/MP4 export and the CLI are native features,
   gated off the web build, which has nowhere to read or write.
   A feature that needs local files is native by nature, not a web regression to fix.
-- **Single-threaded within a context, so the solve moves to another one:**
+- Single-threaded within a context, so the solve moves to another one:
   The plain `wasm32` target has no background thread and `faer` builds without its `rayon` pool,
   so a study cannot be solved off the main thread the way native does it.
   It is sent to a *worker* instead:
@@ -453,7 +453,7 @@ The web is the constrained side, and the constraints are honest, not worked arou
   A descriptor would cover every mesh the gallery can regenerate and miss the one that matters:
   a mesh the reader loaded,
   which exists nowhere else and is the one whose size nobody has bounded.
-- **WebGPU only, by choice:**
+- WebGPU only, by choice:
   No WebGL2 fallback,
   the viewer targets the modern backend and fails legibly where it is absent,
   rather than constraining the render features to the WebGL2 subset.
