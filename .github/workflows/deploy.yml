@@ -1,18 +1,14 @@
 name: Deploy
 
-# Builds the viewer to WebAssembly and publishes it to GitHub Pages.
+# Builds the viewer to WebAssembly and publishes it to Cloudflare Pages.
 
 on:
   push:
     branches: [main]
   workflow_dispatch:
 
-# The Pages deployment needs to write Pages and mint the OIDC token; nothing
-# else. Source is read-only.
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 # One live deployment at a time; a newer push supersedes an in-flight one, but
 # lets it finish rather than cancelling a half-published site.
@@ -24,8 +20,8 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build:
-    name: build wasm
+  deploy:
+    name: deploy
     runs-on: ubuntu-latest
     steps:
       # The built-in meshes are `include_bytes!`-embedded at compile time and
@@ -75,18 +71,12 @@ jobs:
           sed -i "s/__BUILD_STAMP__/${GITHUB_SHA}/" dist/index.html
           grep -q "__BUILD_STAMP__" dist/index.html && exit 1 || true
 
-      - uses: actions/configure-pages@v6
-      - uses: actions/upload-pages-artifact@v5
+      # The Cloudflare Pages project is named after the repository.
+      - uses: cloudflare/wrangler-action@v4
         with:
-          path: dist
-
-  deploy:
-    name: deploy
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v5
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: >
+            pages deploy dist
+            --project-name=${{ github.event.repository.name }}
+            --branch=main
