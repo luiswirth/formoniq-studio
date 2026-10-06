@@ -8,7 +8,7 @@ and the PDE solutions computed on them.
 It runs natively and in the browser via WebAssembly and WebGPU,
 with the solve running client-side,
 so the viewer is reachable without a toolchain at
-[lwirth.com/formoniq-studio](https://lwirth.com/formoniq-studio).
+[formoniq-studio.lwirth.com](https://formoniq-studio.lwirth.com).
 
 ## What it shows
 
