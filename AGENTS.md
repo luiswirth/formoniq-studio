@@ -479,7 +479,6 @@ cargo clippy --lib --target wasm32-unknown-unknown
 
 The web check is the fifth because the platform split is code:
 a native-only change can still break the target that has no filesystem and no threads.
-CI runs the same five on every push and pull request.
 
 Commit messages: `scope: imperative summary`, the scope being the module,
 e.g. `render: bias marks in depth rather than in space`.
