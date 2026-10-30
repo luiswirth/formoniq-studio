@@ -1,6 +1,6 @@
 name: Deploy
 
-# Builds the viewer to WebAssembly and publishes it to Cloudflare Pages.
+# Builds the viewer to WebAssembly and publishes it to a Cloudflare Worker.
 
 on:
   push:
@@ -13,7 +13,7 @@ permissions:
 # One live deployment at a time; a newer push supersedes an in-flight one, but
 # lets it finish rather than cancelling a half-published site.
 concurrency:
-  group: pages
+  group: deploy
   cancel-in-progress: false
 
 env:
@@ -71,12 +71,9 @@ jobs:
           sed -i "s/__BUILD_STAMP__/${GITHUB_SHA}/" dist/index.html
           grep -q "__BUILD_STAMP__" dist/index.html && exit 1 || true
 
-      # The Cloudflare Pages project is named after the repository.
+      # The Cloudflare Worker serves `dist` as static assets.
       - uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: >
-            pages deploy dist
-            --project-name=${{ github.event.repository.name }}
-            --branch=main
+          command: deploy
